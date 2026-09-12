@@ -10,6 +10,7 @@
 	import FolderOpen from '$lib/components/icons/FolderOpen.svelte';
 	import NewFolderAlt from '$lib/components/icons/NewFolderAlt.svelte';
 	import ArrowPath from '$lib/components/icons/ArrowPath.svelte';
+	import Computer from '$lib/components/icons/Computer.svelte';
 	import GlobeAlt from '$lib/components/icons/GlobeAlt.svelte';
 	import GarbageBin from '$lib/components/icons/GarbageBin.svelte';
 	import ArrowUturnLeft from '$lib/components/icons/ArrowUturnLeft.svelte';
@@ -21,6 +22,8 @@
 	export let onSync: Function = () => {};
 	export let onUpload: Function = (data) => {};
 	export let onReset: Function = () => {};
+	export let onLocalUpload: Function = () => {};
+	export let localAvailable: boolean = false;
 
 	let show = false;
 </script>
@@ -70,6 +73,19 @@
 			</button>
 
 			<hr class="my-1 border-gray-100 dark:border-gray-800" />
+
+			{#if localAvailable}
+				<button
+					class="select-none flex h-[1.6875rem] w-full cursor-pointer items-center gap-2 rounded-xl bg-transparent px-2 text-xs hover:text-gray-900 dark:hover:text-gray-100"
+					on:click={() => {
+						onLocalUpload();
+						show = false;
+					}}
+				>
+					<Computer strokeWidth="2" />
+					<div class="flex items-center">{$i18n.t('Local upload')}</div>
+				</button>
+			{/if}
 
 			<button
 				class="select-none flex h-[1.6875rem] w-full cursor-pointer items-center gap-2 rounded-xl bg-transparent px-2 text-xs hover:text-gray-900 dark:hover:text-gray-100"

@@ -58,6 +58,7 @@
 
 	import AddContentMenu from './KnowledgeBase/AddContentMenu.svelte';
 	import AddTextContentModal from './KnowledgeBase/AddTextContentModal.svelte';
+	import LocalFileBrowser from './KnowledgeBase/LocalFileBrowser.svelte';
 	import NewDirectoryModal from './KnowledgeBase/NewDirectoryModal.svelte';
 	import KnowledgeBreadcrumbs from './KnowledgeBase/KnowledgeBreadcrumbs.svelte';
 
@@ -80,6 +81,8 @@
 	let showAddWebpageModal = false;
 	let showAddTextContentModal = false;
 	let showNewDirectoryModal = false;
+	let showLocalFileBrowser = false;
+	let localAvailable = false;
 
 	let showSyncConfirmModal = false;
 	let pendingSyncFiles: Array<{ path: string; filename: string; file: File }> | null = null;
@@ -1127,6 +1130,19 @@
 		dropZone?.addEventListener('dragover', onDragOver);
 		dropZone?.addEventListener('drop', onDrop);
 		dropZone?.addEventListener('dragleave', onDragLeave);
+
+		// Check if local import volume is available
+		try {
+			const localRes = await fetch(`${WEBUI_API_BASE_URL}/files/local/status`, {
+				headers: { Authorization: `Bearer ${localStorage.token}` }
+			});
+			if (localRes.ok) {
+				const localData = await localRes.json();
+				localAvailable = localData.available === true;
+			}
+		} catch {
+			localAvailable = false;
+		}
 	});
 
 	onDestroy(() => {
@@ -1184,6 +1200,16 @@
 	bind:show={showNewDirectoryModal}
 	on:submit={(e) => {
 		createDirectoryHandler(e.detail.name);
+	}}
+/>
+
+<LocalFileBrowser
+	bind:show={showLocalFileBrowser}
+	knowledgeId={knowledge?.id ?? ''}
+	directoryId={currentDirectoryId}
+	token={localStorage.token}
+	onImportComplete={() => {
+		init();
 	}}
 />
 
@@ -1466,6 +1492,10 @@
 									}}
 									onReset={() => {
 										showResetConfirm = true;
+									}}
+									{localAvailable}
+									onLocalUpload={() => {
+										showLocalFileBrowser = true;
 									}}
 								/>
 							</div>
