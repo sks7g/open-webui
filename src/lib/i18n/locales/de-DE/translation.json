@@ -3872,5 +3872,16 @@
 	"YouTube": "YouTube",
 	"YouTube video player": "YouTube-Videoplayer",
 	"Zoom in": "Vergrößern",
-	"Zoom out": "Verkleinern"
+	"Zoom out": "Verkleinern",
+	"Local upload": "Lokaler Upload",
+	"Local File Browser": "Lokaler Dateibrowser",
+	"Import selected files": "Ausgewählte Dateien importieren",
+	"Select files to import from local volume": "Dateien vom lokalen Volume zum Importieren auswählen",
+	"Import complete": "Import abgeschlossen",
+	"Local import not available": "Lokaler Import nicht verfügbar",
+	"files selected": "Dateien ausgewählt",
+	"file selected": "Datei ausgewählt",
+	"Parent directory": "Übergeordnetes Verzeichnis",
+	"Select all": "Alle auswählen",
+	"Deselect all": "Alle abwählen"
 }

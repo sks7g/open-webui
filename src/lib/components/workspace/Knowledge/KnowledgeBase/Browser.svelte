@@ -26,6 +26,8 @@
 	) => void = () => {};
 	export let onSync = () => {};
 	export let onReset = () => {};
+	export let onLocalUpload = () => {};
+	export let localAvailable: boolean = false;
 	const i18n = getContext<any>('i18n');
 	let tree: Files;
 	let selected: KnowledgeFile | null = null;
@@ -208,6 +210,8 @@
 					}}
 					onSync={() => guard(onSync)}
 					onReset={() => guard(onReset)}
+					{localAvailable}
+					onLocalUpload={() => onLocalUpload()}
 				/>{/if}
 		</div>
 		{#if syncing}<p class="px-3 py-1 text-xs text-gray-500">{syncing}</p>{/if}

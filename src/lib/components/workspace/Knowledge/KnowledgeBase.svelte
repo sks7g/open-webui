@@ -12,6 +12,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { config, user, settings } from '$lib/stores';
+	import { WEBUI_API_BASE_URL } from '$lib/constants';
 
 	import { uploadFile } from '$lib/apis/files';
 	import {
@@ -33,6 +34,7 @@
 	import Spinner from '$lib/components/common/Spinner.svelte';
 
 	import AddTextContentModal from './KnowledgeBase/AddTextContentModal.svelte';
+	import LocalFileBrowser from './KnowledgeBase/LocalFileBrowser.svelte';
 
 	import SyncConfirmDialog from '../../common/ConfirmDialog.svelte';
 	import ConfirmDialog from '../../common/ConfirmDialog.svelte';
@@ -44,6 +46,8 @@
 
 	let showAddWebpageModal = false;
 	let showAddTextContentModal = false;
+	let showLocalFileBrowser = false;
+	let localAvailable = false;
 
 	let showSyncConfirmModal = false;
 	let pendingSyncFiles: Array<{ path: string; filename: string; file: File }> | null = null;
@@ -782,6 +786,19 @@
 		dropZone?.addEventListener('dragover', onDragOver);
 		dropZone?.addEventListener('drop', onDrop);
 		dropZone?.addEventListener('dragleave', onDragLeave);
+
+		// Check if local import volume is available
+		try {
+			const localRes = await fetch(`${WEBUI_API_BASE_URL}/files/local/status`, {
+				headers: { Authorization: `Bearer ${localStorage.token}` }
+			});
+			if (localRes.ok) {
+				const localData = await localRes.json();
+				localAvailable = localData.available === true;
+			}
+		} catch {
+			localAvailable = false;
+		}
 	});
 
 	onDestroy(() => {
@@ -820,6 +837,16 @@
 	on:submit={(e) => {
 		const file = createFileFromText(e.detail.name, e.detail.content);
 		uploadFileHandler(file);
+	}}
+/>
+
+<LocalFileBrowser
+	bind:show={showLocalFileBrowser}
+	knowledgeId={knowledge?.id ?? ''}
+	directoryId={currentDirectoryId}
+	token={localStorage.token}
+	onImportComplete={() => {
+		init();
 	}}
 />
 
@@ -996,6 +1023,10 @@
 						if (pendingSyncFiles?.length) showSyncConfirmModal = true;
 					}}
 					onReset={() => (showResetConfirm = true)}
+					{localAvailable}
+					onLocalUpload={() => {
+						showLocalFileBrowser = true;
+					}}
 				/>
 			{/if}
 		</div>
